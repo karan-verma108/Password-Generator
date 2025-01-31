@@ -1,5 +1,11 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 
+import {
+  PasswordLengthRange,
+  PasswordInputWithCopyCTA,
+  CheckboxWithLabel,
+} from './elements';
+
 export default function PasswordGenerator() {
   const [passwordLength, setPasswordLength] = useState(8);
   const [randomPassword, setRandomPassword] = useState('');
@@ -42,7 +48,7 @@ export default function PasswordGenerator() {
   const handleCopyClick = () => {
     inputRef.current?.select();
     navigator.clipboard.writeText(randomPassword);
-    setCopyCtaStatus({ label: 'Copied', isCopied: true });
+    setCopyCtaStatus({ label: 'Copied !', isCopied: true });
   };
 
   useEffect(() => {
@@ -58,73 +64,38 @@ export default function PasswordGenerator() {
   }, [isCapitalize, isNumeric, setPasswordLength, generateRandomPassword]);
 
   return (
-    <div className='flex flex-col gap-4 h-screen justify-center items-center'>
+    <div className='flex flex-col gap-4 h-screen justify-center items-center bg-gradient-to-bl from-amber-500 to-lime-500 relative'>
       <div className='flex flex-col gap-5 justify-center items-center'>
         <h1 className='text-2xl leading-5 font-medium'>
           Random Password Generator
         </h1>
-        <div className='flex gap-3 p-3 items-center shadow-lg rounded-lg'>
-          <input
-            type='text'
-            ref={inputRef}
-            id='generatedPassword'
-            name='generatedPassword'
-            value={randomPassword}
-            readOnly
-            className='border border-slate-400 p-2 text-lg leading-4 font-normal'
-          />
-          <button
-            className={`w-fit ${
-              copyCtaStatus.isCopied
-                ? 'bg-yellow-400 text-black'
-                : 'bg-blue-500 text-white'
-            } rounded-md p-2 cursor-pointer`}
-            onClick={handleCopyClick}
-          >
-            {copyCtaStatus.label}
-          </button>
-        </div>
-        <input
-          type='range'
-          min='8'
-          max='20'
-          value={passwordLength}
-          step={'1'}
-          onChange={handleRange}
+        <PasswordInputWithCopyCTA
+          password={randomPassword}
+          inputRef={inputRef}
+          copyCtaStatus={copyCtaStatus}
+          onClick={handleCopyClick}
+        />
+        <PasswordLengthRange length={passwordLength} onChange={handleRange} />
+      </div>
+      <div className='flex gap-3 shadow-lg p-4 rounded-lg border border-slate-200'>
+        <CheckboxWithLabel
+          id='capitalLetters'
+          name='capitalLetters'
+          label='Capitalize'
+          value={isCapitalize}
+          onChange={handleCapitalizeChange}
+        />
+        <CheckboxWithLabel
+          id='numberLetters'
+          name='numberLetters'
+          label='Numbers'
+          value={isNumeric}
+          onChange={handleNumericChange}
         />
       </div>
-      <div className='flex gap-3'>
-        <div className='flex gap-2 items-center'>
-          <input
-            type='checkbox'
-            id='capitalLetters'
-            name='capitalLetters'
-            value={isCapitalize}
-            onChange={handleCapitalizeChange}
-          />
-          <label
-            htmlFor='capitalLetters'
-            className='text-lg leading-4 font-normal'
-          >
-            Capitalize
-          </label>
-        </div>
-        <div className='flex gap-2 items-center'>
-          <input
-            type='checkbox'
-            id='numberLetters'
-            name='numberLetters'
-            value={isNumeric}
-            onChange={handleNumericChange}
-          />
-          <label
-            htmlFor='numberLetters'
-            className='text-lg leading-4 font-normal'
-          >
-            Numbers
-          </label>
-        </div>
-      </div>
+      <p className='text-lg font-medium leading-5 absolute bottom-5'>
+        Made with ❤️ by Karan
+      </p>
     </div>
   );
 }
